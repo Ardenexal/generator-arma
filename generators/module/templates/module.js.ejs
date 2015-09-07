@@ -1,0 +1,14 @@
+angular.module('<%= _.camelCase(name) %>', ['ui.bootstrap','<%= routerModuleName %>','ngAnimate']);
+<% if (!uirouter) { %>
+angular.module('<%= _.camelCase(name) %>').config(function($routeProvider) {
+
+    /* Add New Routes Above */
+
+});
+<% } %><% if (uirouter) { %>
+angular.module('<%= _.camelCase(name) %>').config(function($stateProvider) {
+
+    /* Add New States Above */
+
+});
+<% } %>

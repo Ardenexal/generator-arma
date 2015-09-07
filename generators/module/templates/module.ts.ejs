@@ -1,0 +1,51 @@
+angular.module('<%= _.camelCase(appname) %>', ['ui.bootstrap', '<%= routerModuleName %>', 'ngAnimate']);
+module App {
+    <% if (!uirouter) { %>
+    export class Config {
+        public static $inject = [
+            '$routeProvider'
+        ];
+
+        constructor($routeProvider) {
+            /* Add New Routes Above */
+            $routeProvider.otherwise({redirectTo: '/home'});
+        }
+    }
+    <% } %>
+
+    <% if (uirouter) { %>
+    export class Config {
+        public static $inject = [
+            '$stateProvider',
+            '$urlRouterProvider'
+        ];
+
+        constructor($stateProvider, $urlRouterProvider) {
+            /* Add New States Above */
+            $urlRouterProvider.otherwise('/home');
+        }
+    }
+    <% } %>
+
+    export class Run {
+        public static $inject = [
+            '$rootScope'
+        ];
+
+        constructor($rootScope) {
+            $rootScope.safeApply = function (fn) {
+                var phase = $rootScope.$$phase;
+                if (phase === '$apply' || phase === '$digest') {
+                    if (fn && (typeof(fn) === 'function')) {
+                        fn();
+                    }
+                } else {
+                    this.$apply(fn);
+                }
+            };
+        }
+    }
+}
+
+angular.module('<%= _.camelCase(appname) %>').config(App.Config);
+angular.module('<%= _.camelCase(appname) %>').run(App.Run);
