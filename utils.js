@@ -28,32 +28,12 @@ exports.addToFile = function (filename, lineToAdd, beforeMarker) {
         throw e;
     }
 };
-
-exports.processTemplates = function (name, dir, type, that, defaultDir, configName, module) {
-
-    if (!defaultDir) {
-        defaultDir = 'templates'
-    }
-    if (!configName) {
-        configName = type + 'Templates';
-    }
-
-    var templateDirectory = path.join(path.dirname(that.resolved), defaultDir);
-    if (that.config.get(configName)) {
-        templateDirectory = path.join(process.cwd(), that.config.get(configName));
-    }
-    _.chain(fs.readdirSync(templateDirectory))
-        .filter(function (template) {
-            return template[0] !== '.';
-        })
-        .each(function (template) {
-            var customTemplateName = template.replace(type, name);
-            var templateFile = path.join(templateDirectory, template);
-            //create the file
-            that.template(templateFile, path.join(dir, customTemplateName));
-            //inject the file reference into index.html/app.less/etc as appropriate
-            exports.inject(path.join(dir, customTemplateName), that, module);
-        });
+exports.processTemplate = function (src, dest, data, that) {
+    that.fs.copyTpl(
+        that.templatePath(src),
+        that.destinationPath(dest),
+        data
+    );
 };
 
 exports.inject = function (filename, that, module) {
@@ -249,10 +229,12 @@ exports.askForModuleAndDir = function (type, that, ownDir, cb) {
     });
 };
 
-exports.getNameArg = function (that, args) {
-    if (args.length > 0) {
-        that.name = args[0];
-    }
+exports.getNameArg = function (that,desciption,required) {
+    that.argument('name', {
+        required: required ?required:false,
+        type: String,
+        desc: desciption?desciption:''
+    });
 };
 
 exports.addNamePrompt = function (that, prompts, type) {
@@ -265,4 +247,4 @@ exports.addNamePrompt = function (that, prompts, type) {
             }
         });
     }
-}
+};

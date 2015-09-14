@@ -3,14 +3,14 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var path = require('path');
-var cgUtils = require('../../utils');
+var utils = require('../../utils');
 module.exports = yeoman.generators.Base.extend({
     prompting: function () {
         var done = this.async();
 
         // Have Yeoman greet the user.
         this.log(yosay(
-            'Welcome to the phenomenal ' + chalk.red('GeneratorArdenexal') + ' generator!'
+            'Welcome to the phenomenal ' + chalk.red('Arma') + ' generator!'
         ));
 
         var prompts = [{
@@ -36,6 +36,7 @@ module.exports = yeoman.generators.Base.extend({
             this.props = props;
             // To access props later use this.props.someOption;
             this.appname = props.appname;
+            this.scriptlanguage = props.scriptlanguage;
             if (props.router === 'Angular UI Router') {
                 this.uirouter = true;
                 this.routerJs = 'bower_components/angular-ui-router/release/angular-ui-router.js';
@@ -51,63 +52,26 @@ module.exports = yeoman.generators.Base.extend({
         }.bind(this));
     },
 
-    writing: {
-        app: function () {
-            this.directory('skeleton/', './');
-            if (this.props.scriptlanguage === 'Typescript') {
-                this.fs.copyTpl(
-                    this.templatePath('ts/app.ejs'),
-                    this.destinationPath('app.ts'),
-                    {
-                        uirouter: this.uirouter,
-                        appname: this.appname,
-                        routerModuleName:this.routerModuleName
-                    }
-                );
-            } else {
-                this.fs.copyTpl(
-                    this.templatePath('js/app.ejs'),
-                    this.destinationPath('app.js'),
-                    {
-                        uirouter: this.uirouter,
-                        appname: this.appname,
-                        routerModuleName:this.routerModuleName
-
-                    }
-                );
-            }
-        },
-
-        projectfiles: function () {
-            this.fs.copyTpl(
-                this.templatePath('bower.ejs'),
-                this.destinationPath('bower.json'),
-                {
-                    appname: this.appname,
-                    uirouter: this.uirouter
-                }
-            );
-            this.fs.copyTpl(
-                this.templatePath('package.ejs'),
-                this.destinationPath('package.json'),
-                {
-                    appname: this.appname,
-                    uirouter: this.uirouter
-                }
-            );
-            this.fs.copyTpl(
-                this.templatePath('index.ejs'),
-                this.destinationPath('index.html'),
-                {
-                    appname: this.appname,
-                    uirouter: this.uirouter,
-                    routerJs:this.routerJs,
-                    routerViewDirective:this.routerViewDirective
-                }
-            );
+    writing: function () {
+        this.directory('skeleton/', './');
+        var data = {
+            appname: this.appname,
+            uirouter: this.uirouter,
+            routerJs: this.routerJs,
+            routerViewDirective: this.routerViewDirective,
+            routerModuleName: this.routerModuleName
+        };
+        if (this.scriptlanguage === 'Typescript') {
+            utils.processTemplate('ts/app.ts.ejs', '/app.ts', data, this);
+        } else {
+            utils.processTemplate('js/app.js.ejs', '/app.js', data, this);
         }
-    },
 
+        utils.processTemplate('/bower.json.ejs', '/bower.json', data, this);
+        utils.processTemplate('/package.json.ejs', '/package.json', data, this);
+        utils.processTemplate('/index.html.ejs', '/index.html', data, this);
+
+    },
     install: function () {
         this.installDependencies();
     },
@@ -117,18 +81,18 @@ module.exports = yeoman.generators.Base.extend({
         this.config.set('directiveDirectory', 'directive/');
         this.config.set('filterDirectory', 'filter/');
         this.config.set('serviceDirectory', 'service/');
-        this.config.set('language',this.props.scriptlanguage);
-        this.config.set('uirouter',this.props.uirouter);
+        this.config.set('language', this.scriptlanguage);
+        this.config.set('uirouter', this.uirouter);
         var inject = {
             js: {
                 file: 'index.html',
-                marker: cgUtils.JS_MARKER,
+                marker: utils.JS_MARKER,
                 template: '<script src="<%= filename %>"></script>'
             },
             less: {
                 relativeToModule: true,
                 file: '<%= module %>.less',
-                marker: cgUtils.LESS_MARKER,
+                marker: utils.LESS_MARKER,
                 template: '@import "<%= filename %>";'
             }
         };

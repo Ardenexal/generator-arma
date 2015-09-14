@@ -1,6 +1,6 @@
 {
   "generator-generator": {},
-  "generator-generator-ardenexal": {
+  "generator-arma": {
     "partialDirectory": "partial/",
     "modalDirectory": "partial/",
     "directiveDirectory": "directive/",

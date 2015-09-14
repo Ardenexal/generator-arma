@@ -1,10 +1,10 @@
 {
-  "name": "generator-generator-ardenexal",
+  "name": "generator-arma",
   "version": "0.0.0",
   "description": "Yeoman generator",
   "license": "MIT",
   "main": "app/index.js",
-  "repository": "Ardenexal/generator-generator-ardenexal",
+  "repository": "Ardenexal/generator-arma",
   "author": {
     "name": "Alex",
     "email": "alexmurray400@gmail.com",

@@ -1,7 +1,7 @@
 'use strict';
 var yeoman = require('yeoman-generator');
 var path = require('path');
-var cgUtils = require('../../utils.js');
+var utils = require('../../utils.js');
 var chalk = require('chalk');
 var _ = require('lodash');
 
@@ -10,6 +10,7 @@ module.exports = yeoman.generators.Base.extend({
         this.uirouter = this.config.get('uirouter');
         this.scriptType = this.config.get('language');
         this.routerModuleName = this.uirouter ? 'ui.router' : 'ngRoute';
+        utils.getNameArg(this, 'Angular Modal');
     },
     prompting: function () {
         var cb = this.async();
@@ -30,7 +31,7 @@ module.exports = yeoman.generators.Base.extend({
                     return true;
                 }
             }];
-        cgUtils.addNamePrompt(this, prompts, 'module');
+        utils.addNamePrompt(this, prompts, 'module');
         this.prompt(prompts, function (props) {
             if (props.name) {
                 this.name = props.name;
@@ -42,35 +43,22 @@ module.exports = yeoman.generators.Base.extend({
     writing: function () {
         var that = this;
         var defaultDir = '';
-        var module = cgUtils.getParentModule(path.join(this.dir, '..'));
+        var to = this.dir + '/' + this.name;
+        var module = utils.getParentModule(path.join(this.dir, '..'));
+        var data = {
+            appname: that.appname,
+            name: that.name,
+            htmlPath: path.join(that.dir, that.name + '.html').replace(/\\/g, '/'),
+            routerModuleName: that.routerModuleName,
+            uirouter: that.uirouter
+        };
         module.dependencies.modules.push(_.camelCase(this.name));
         module.save();
         this.log.writeln(chalk.green(' updating') + ' %s', path.basename(module.file));
 
-        var files = [];
-        files.push({
-            src: defaultDir + '/module.js.ejs',
-            dest: this.dir + '/' + this.name + '.js'
-        });
-        files.push({
-            src: defaultDir + '/module.less',
-            dest: this.dir + '/' + this.name + '.less'
-        });
+        utils.processTemplate(defaultDir + '/module.js.ejs', to + '.js', data, this);
+        utils.processTemplate(defaultDir + '/module.less', to + '.less', data, this);
 
-
-        _.each(files, function (n) {
-            that.fs.copyTpl(
-                that.templatePath(n.src),
-                that.destinationPath(n.dest),
-                {
-                    appname: that.appname,
-                    name: that.name,
-                    htmlPath: path.join(that.dir, that.name + '.html').replace(/\\/g, '/'),
-                    routerModuleName: that.routerModuleName,
-                    uirouter: that.uirouter
-                }
-            )
-        });
 
         var modules = this.config.get('modules');
         if (!modules) {
