@@ -1,4 +1,4 @@
-# generator-generator-ardenexal [![Build Status](https://secure.travis-ci.org/Ardenexal/generator-generator-ardenexal.png?branch=master)](https://travis-ci.org/Ardenexal/generator-generator-ardenexal)
+# generator-arma [![Build Status](https://secure.travis-ci.org/Ardenexal/generator-arma.png?branch=master)](https://travis-ci.org/Ardenexal/generator-arma)
 
 > [Yeoman](http://yeoman.io) generator
 
@@ -23,16 +23,16 @@ npm install -g yo
 
 Yeoman travels light. He didn't pack any generators when he moved in. You can think of a generator like a plug-in. You get to choose what type of application you wish to create, such as a Backbone application or even a Chrome extension.
 
-To install generator-generator-ardenexal from npm, run:
+To install generator-arma from npm, run:
 
 ```bash
-npm install -g generator-generator-ardenexal
+npm install -g generator-arma
 ```
 
 Finally, initiate the generator:
 
 ```bash
-yo generator ardenexal
+yo generator arma
 ```
 
 ### Getting To Know Yeoman

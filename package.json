@@ -14,7 +14,8 @@
     "test": "mocha"
   },
   "files": [
-    "generators"
+    "generators",
+    "utils.js"
   ],
   "keywords": [
     "yeoman-generator"
