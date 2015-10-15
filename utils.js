@@ -34,6 +34,7 @@ exports.processTemplate = function (src, dest, data, that) {
         that.destinationPath(dest),
         data
     );
+    exports.inject(path.baseaname(dest),that,that.module);
 };
 
 exports.inject = function (filename, that, module) {
