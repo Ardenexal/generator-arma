@@ -25,7 +25,7 @@ module.exports = yeoman.generators.Base.extend({
                 this.name = props.name;
             }
             this.route = url.resolve('',props.route);
-            utils.askForModuleAndDir('modal', this, true, cb);
+            utils.askForModuleAndDir('parial', this, true, cb);
         }.bind(this));
 
     },

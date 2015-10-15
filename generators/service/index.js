@@ -25,7 +25,7 @@ module.exports = yeoman.generators.Base.extend({
         var defaultDir = '';
         var toFolder = this.dir + '/' + this.name;
         var data = {
-            appname: this.module,
+            appname: this.module.name,
             name: this.name
         };
         utils.processTemplate(defaultDir + '/service.js', toFolder + '/' + this.name + '.js', data,this);
