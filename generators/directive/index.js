@@ -39,11 +39,11 @@ module.exports = yeoman.generators.Base.extend({
     };
         if (this.needpartial) {
             defaultDir = 'complex';
-            utils.processTemplate(defaultDir + '/directive.html', toFolder + '/' + this.name + '.html', data,this);
-            utils.processTemplate(defaultDir + '/directive.less', toFolder + '/' + this.name + '.less', data,this);
+            utils.processTemplate(defaultDir + '/directive.html', toFolder  + this.name + '.html', data,this);
+            utils.processTemplate(defaultDir + '/directive.less', toFolder  + this.name + '.less', data,this);
         }
-        utils.processTemplate(defaultDir + '/directive.js', toFolder + '/' + this.name + '.js', data,this);
-        utils.processTemplate(defaultDir + '/directive-spec.js', toFolder + '/' + this.name + '-spec.js', data,this);
+        utils.processTemplate(defaultDir + '/directive.js', toFolder  + this.name + '.js', data,this);
+        utils.processTemplate(defaultDir + '/directive-spec.js', toFolder + this.name + '-spec.js', data,this);
     }
 })
 ;

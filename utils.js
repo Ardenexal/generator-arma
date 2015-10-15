@@ -34,22 +34,23 @@ exports.processTemplate = function (src, dest, data, that) {
         that.destinationPath(dest),
         data
     );
-    exports.inject(path.baseaname(dest),that,that.module);
+    exports.inject(dest,that,that.module);
 };
 
 exports.inject = function (filename, that, module) {
     //special case to skip unit tests
-    if (_(filename).endsWith('-spec.js') ||
-        _(filename).endsWith('_spec.js') ||
-        _(filename).endsWith('-test.js') ||
-        _(filename).endsWith('_test.js')) {
+
+    if (_.endsWith(filename,'-spec.js') ||
+        _.endsWith(filename,'_spec.js') ||
+        _.endsWith(filename,'-test.js') ||
+        _.endsWith(filename,'_test.js')) {
         return;
     }
-
     var ext = path.extname(filename);
     if (ext[0] === '.') {
         ext = ext.substring(1);
     }
+
     var config = that.config.get('inject')[ext];
     if (config) {
         var configFile = _.template(config.file)({module: path.basename(module.file, '.js')});

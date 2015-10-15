@@ -26,7 +26,7 @@ module.exports = yeoman.generators.Base.extend({
     },
     writing: function () {
         var defaultDir = '';
-        var toFolder = this.dir + '/' + this.name;
+        var toFolder = this.dir + this.name;
         this.ctrlname = _.capitalize(_.camelCase(this.name)) + 'Ctrl';
         var data = {
             appname: this.module.name,

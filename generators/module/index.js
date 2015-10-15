@@ -43,7 +43,7 @@ module.exports = yeoman.generators.Base.extend({
     writing: function () {
         var that = this;
         var defaultDir = '';
-        var to = this.dir + '/' + this.name;
+        var to = this.dir + this.name;
         var module = utils.getParentModule(path.join(this.dir, '..'));
         var data = {
             appname: that.appname,

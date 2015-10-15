@@ -25,7 +25,7 @@ module.exports = yeoman.generators.Base.extend({
                 this.name = props.name;
             }
             this.route = url.resolve('',props.route);
-            utils.askForModuleAndDir('parial', this, true, cb);
+            utils.askForModuleAndDir('partial', this, true, cb);
         }.bind(this));
 
     },
@@ -36,10 +36,10 @@ module.exports = yeoman.generators.Base.extend({
             appname: this.module.name,
             ctrlname: _.camelCase(_.capitalize(this.name)) + 'Ctrl'
         };
-        utils.processTemplate(defaultDir + '/partial.js', toFolder + '/' + this.name + '.js', data,this);
-        utils.processTemplate(defaultDir + '/partial-spec.js', toFolder + '/' + this.name + '-spec.js', data,this);
-        utils.processTemplate(defaultDir + '/partial.less', toFolder + '/' + this.name + '.less', data,this);
-        utils.processTemplate(defaultDir + '/partial.html', toFolder + '/' + this.name + '.html', data,this);
+        utils.processTemplate(defaultDir + '/partial.js', toFolder  + this.name + '.js', data,this);
+        utils.processTemplate(defaultDir + '/partial-spec.js', toFolder  + this.name + '-spec.js', data,this);
+        utils.processTemplate(defaultDir + '/partial.less', toFolder  + this.name + '.less', data,this);
+        utils.processTemplate(defaultDir + '/partial.html', toFolder  + this.name + '.html', data,this);
         if (this.route && this.route.length > 0) {
             var partialUrl = this.dir + this.name + '.html';
             utils.injectRoute(this.module.file, this.config.get('uirouter'), this.name, this.route, partialUrl, this);
