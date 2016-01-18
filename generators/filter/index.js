@@ -21,7 +21,7 @@ module.exports = yeoman.generators.Base.extend({
     },
     writing: function () {
         var data = {
-            appname: this.module,
+            appname: this.module.name,
             name: this.name
         };
         utils.processTemplate('filter.js', this.name + '.js', data, this);

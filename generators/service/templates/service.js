@@ -1,4 +1,4 @@
-angular.module('<%= appname %>').factory('<%= _.camelCase(name) %>',function() {
+angular.module('<%= appname %>').factory('<%= _.capitalize(_.camelCase(name)) %>',function() {
 
     var <%= _.camelCase(name) %> = {};
 

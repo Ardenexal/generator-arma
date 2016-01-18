@@ -34,16 +34,16 @@ exports.processTemplate = function (src, dest, data, that) {
         that.destinationPath(dest),
         data
     );
-    exports.inject(dest,that,that.module);
+    exports.inject(dest, that, that.module);
 };
 
 exports.inject = function (filename, that, module) {
     //special case to skip unit tests
 
-    if (_.endsWith(filename,'-spec.js') ||
-        _.endsWith(filename,'_spec.js') ||
-        _.endsWith(filename,'-test.js') ||
-        _.endsWith(filename,'_test.js')) {
+    if (_.endsWith(filename, '-spec.js') ||
+        _.endsWith(filename, '_spec.js') ||
+        _.endsWith(filename, '-test.js') ||
+        _.endsWith(filename, '_test.js')) {
         return;
     }
     var ext = path.extname(filename);
@@ -53,7 +53,16 @@ exports.inject = function (filename, that, module) {
 
     var config = that.config.get('inject')[ext];
     if (config) {
-        var configFile = _.template(config.file)({module: path.basename(module.file, '.js')});
+        var configFile;
+        if (!module) {
+            module = {
+                file: 'app.js'
+            };
+        }
+
+        configFile = _.template(config.file)({module: path.basename(module.file, '.js')});
+
+
         var injectFileRef = filename;
         if (config.relativeToModule) {
             configFile = path.join(path.dirname(module.file), configFile);
@@ -231,11 +240,11 @@ exports.askForModuleAndDir = function (type, that, ownDir, cb) {
     });
 };
 
-exports.getNameArg = function (that,desciption,required) {
+exports.getNameArg = function (that, desciption, required) {
     that.argument('name', {
-        required: required ?required:false,
+        required: required ? required : false,
         type: String,
-        desc: desciption?desciption:''
+        desc: desciption ? desciption : ''
     });
 };
 
