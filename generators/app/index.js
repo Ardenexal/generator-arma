@@ -53,29 +53,6 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     writing: function () {
-        this.directory('skeleton/', './');
-        var data = {
-            appname: this.appname,
-            uirouter: this.uirouter,
-            routerJs: this.routerJs,
-            routerViewDirective: this.routerViewDirective,
-            routerModuleName: this.routerModuleName
-        };
-        if (this.scriptlanguage === 'Typescript') {
-            utils.processTemplate('ts/app.ts.ejs', '/app.ts', data, this);
-        } else {
-            utils.processTemplate('js/app.js.ejs', '/app.js', data, this);
-        }
-
-        utils.processTemplate('/bower.json.ejs', '/bower.json', data, this);
-        utils.processTemplate('/package.json.ejs', '/package.json', data, this);
-        utils.processTemplate('/index.html.ejs', '/index.html', data, this);
-
-    },
-    install: function () {
-        this.installDependencies();
-    },
-    end: function () {
         this.config.set('partialDirectory', 'partial/');
         this.config.set('modalDirectory', 'partial/');
         this.config.set('directiveDirectory', 'directive/');
@@ -97,6 +74,31 @@ module.exports = yeoman.generators.Base.extend({
             }
         };
         this.config.set('inject', inject);
+
+        this.directory('skeleton/', './');
+        var data = {
+            appname: this.appname,
+            uirouter: this.uirouter,
+            routerJs: this.routerJs,
+            routerViewDirective: this.routerViewDirective,
+            routerModuleName: this.routerModuleName
+        };
+        utils.processTemplate('/index.html.ejs', '/index.html', data, this);
+        if (this.scriptlanguage === 'Typescript') {
+            utils.processTemplate('ts/app.ts.ejs', '/app.ts', data, this);
+        } else {
+            utils.processTemplate('js/app.js.ejs', '/app.js', data, this);
+        }
+
+        utils.processTemplate('/bower.json.ejs', '/bower.json', data, this);
+        utils.processTemplate('/package.json.ejs', '/package.json', data, this);
+
+
+    },
+    install: function () {
+        //this.installDependencies();
+    },
+    end: function () {
         this.config.save();
     }
 });

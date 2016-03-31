@@ -50,7 +50,7 @@ exports.inject = function (filename, that, module) {
     if (ext[0] === '.') {
         ext = ext.substring(1);
     }
-
+    //console.log(that.config.get('inject'));
     var config = that.config.get('inject')[ext];
     if (config) {
         var configFile;

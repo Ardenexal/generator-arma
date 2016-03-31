@@ -8,26 +8,25 @@ var pkg = require('./package.json');
 //this method is used to create a set of inclusive patterns for all subdirectories
 //skipping node_modules, bower_components, dist, and any .dirs
 //This enables users to create any directory structure they desire.
-var createFolderGlobs = function(fileTypePatterns) {
+var createFolderGlobs = function (fileTypePatterns) {
   fileTypePatterns = Array.isArray(fileTypePatterns) ? fileTypePatterns : [fileTypePatterns];
-  var ignore = ['node_modules','bower_components','dist','temp'];
+  var ignore = ['node_modules', 'bower_components', 'dist', 'temp'];
   var fs = require('fs');
   return fs.readdirSync(process.cwd())
-          .map(function(file){
-            if (ignore.indexOf(file) !== -1 ||
-                file.indexOf('.') === 0 ||
-                !fs.lstatSync(file).isDirectory()) {
-              return null;
-            } else {
-              return fileTypePatterns.map(function(pattern) {
-                return file + '/**/' + pattern;
-              });
-            }
-          })
-          .filter(function(patterns){
-            return patterns;
-          })
-          .concat(fileTypePatterns);
+      .map(function (file) {
+        if (ignore.indexOf(file) !== -1 ||
+            file.indexOf('.') === 0 || !fs.lstatSync(file).isDirectory()) {
+          return null;
+        } else {
+          return fileTypePatterns.map(function (pattern) {
+            return file + '/**/' + pattern;
+          });
+        }
+      })
+      .filter(function (patterns) {
+        return patterns;
+      })
+      .concat(fileTypePatterns);
 };
 
 module.exports = function (grunt) {
@@ -47,34 +46,37 @@ module.exports = function (grunt) {
     watch: {
       main: {
         options: {
-            livereload: true,
-            livereloadOnError: false,
-            spawn: false
+          livereload: true,
+          livereloadOnError: false,
+          spawn: false
         },
-        files: [createFolderGlobs(['*.js','*.less','*.html']),'!_SpecRunner.html','!.grunt'],
+        files: [createFolderGlobs(['*.js', '*.less', '*.html']), '!_SpecRunner.html', '!.grunt'],
         tasks: [] //all the tasks are run dynamically during the watch event handler
+      },
+      build: {
+        files: [createFolderGlobs(['*.js', '*.less', '*.html']), '!_SpecRunner.html', '!.grunt'],
+        tasks: ['jshint', 'clean:before', 'less', 'dom_munger', 'ngtemplates', 'cssmin', 'concat', 'ngAnnotate', 'copy', 'htmlmin', 'clean:after']
       }
     },
     jshint: {
       main: {
         options: {
-            jshintrc: '.jshintrc'
+          jshintrc: '.jshintrc'
         },
         src: createFolderGlobs('*.js')
       }
     },
     clean: {
-      before:{
-        src:['dist','temp']
+      before: {
+        src: ['dist', 'temp']
       },
       after: {
-        src:['temp']
+        src: ['temp']
       }
     },
     less: {
       production: {
-        options: {
-        },
+        options: {},
         files: {
           'temp/app.css': 'app.less'
         }
@@ -83,10 +85,10 @@ module.exports = function (grunt) {
     ngtemplates: {
       main: {
         options: {
-            module: pkg.name,
-            htmlmin:'<%%= htmlmin.main.options %>'
+          module: pkg.name,
+          htmlmin: '<%= htmlmin.main.options %>'
         },
-        src: [createFolderGlobs('*.html'),'!index.html','!_SpecRunner.html'],
+        src: [createFolderGlobs('*.html'), '!index.html', '!_SpecRunner.html'],
         dest: 'temp/templates.js'
       }
     },
@@ -94,58 +96,58 @@ module.exports = function (grunt) {
       main: {
         files: [
           {src: ['img/**'], dest: 'dist/'},
-          {src: ['bower_components/font-awesome/fonts/**'], dest: 'dist/',filter:'isFile',expand:true},
-          {src: ['bower_components/bootstrap/fonts/**'], dest: 'dist/',filter:'isFile',expand:true}
+          {src: ['bower_components/font-awesome/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true},
+          {src: ['bower_components/bootstrap/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true}
           //{src: ['bower_components/angular-ui-utils/ui-utils-ieshiv.min.js'], dest: 'dist/'},
           //{src: ['bower_components/select2/*.png','bower_components/select2/*.gif'], dest:'dist/css/',flatten:true,expand:true},
           //{src: ['bower_components/angular-mocks/angular-mocks.js'], dest: 'dist/'}
         ]
       }
     },
-    dom_munger:{
+    dom_munger: {
       read: {
         options: {
-          read:[
-            {selector:'script[data-concat!="false"]',attribute:'src',writeto:'appjs'},
-            {selector:'link[rel="stylesheet"][data-concat!="false"]',attribute:'href',writeto:'appcss'}
+          read: [
+            {selector: 'script[data-concat!="false"]', attribute: 'src', writeto: 'appjs'},
+            {selector: 'link[rel="stylesheet"][data-concat!="false"]', attribute: 'href', writeto: 'appcss'}
           ]
         },
         src: 'index.html'
       },
       update: {
         options: {
-          remove: ['script[data-remove!="false"]','link[data-remove!="false"]'],
+          remove: ['script[data-remove!="false"]', 'link[data-remove!="false"]'],
           append: [
-            {selector:'body',html:'<script src="<%%= pkg.name %>.min.js"></script>'},
-            {selector:'head',html:'<link rel="stylesheet" href="<%%= pkg.name %>.min.css">'}
+            {selector: 'body', html: '<script src="app.full.min.js"></script>'},
+            {selector: 'head', html: '<link rel="stylesheet" href="app.full.min.css">'}
           ]
         },
-        src:'index.html',
-        dest: 'dist/index.html'
+        src: 'index.html',
+        dest: 'dist/index.ejs'
       }
     },
     cssmin: {
       main: {
-        src:['temp/app.css','<%%= dom_munger.data.appcss %>'],
-        dest:'dist/app.full.min.css'
+        src: ['temp/app.css', '<%= dom_munger.data.appcss %>'],
+        dest: 'dist/app.full.min.css'
       }
     },
     concat: {
       main: {
-        src: ['<%%= dom_munger.data.appjs %>','<%%= ngtemplates.main.dest %>'],
+        src: ['<%= dom_munger.data.appjs %>', '<%= ngtemplates.main.dest %>'],
         dest: 'temp/app.full.js'
       }
     },
     ngAnnotate: {
       main: {
-        src:'temp/app.full.js',
-        dest: 'temp/app.full.js'
+        src: 'temp/app.full.js',
+        dest: 'dist/app.full.min.js'
       }
     },
     uglify: {
       main: {
         src: 'temp/app.full.js',
-        dest:'dist/app.full.min.js'
+        dest: 'dist/app.full.min.js'
       }
     },
     htmlmin: {
@@ -157,14 +159,16 @@ module.exports = function (grunt) {
           removeComments: true,
           removeEmptyAttributes: true,
           removeScriptTypeAttributes: true,
-          removeStyleLinkTypeAttributes: true
+          removeStyleLinkTypeAttributes: true,
+          preventAttributesEscaping: true,
+          customAttrSurround: [[/<%=\s+/, /\s+%>/]]
         },
         files: {
-          'dist/index.html': 'dist/index.html'
+          'dist/index.ejs': 'dist/index.ejs'
         }
       }
     },
-    //Imagemin has issues on Windows.  
+    //Imagemin has issues on Windows.
     //To enable imagemin:
     // - "npm install grunt-contrib-imagemin"
     // - Comment in this section
@@ -182,29 +186,71 @@ module.exports = function (grunt) {
       options: {
         frameworks: ['jasmine'],
         files: [  //this files data is also updated in the watch handler, if updated change there too
-          '<%%= dom_munger.data.appjs %>',
+          '<%= dom_munger.data.appjs %>',
           'bower_components/angular-mocks/angular-mocks.js',
           createFolderGlobs('*-spec.js')
         ],
-        logLevel:'ERROR',
-        reporters:['mocha'],
+        logLevel: 'ERROR',
+        reporters: ['mocha'],
         autoWatch: false, //watching is handled by grunt-contrib-watch
         singleRun: true
       },
       all_tests: {
-        browsers: ['PhantomJS','Chrome','Firefox']
+        browsers: ['PhantomJS', 'Chrome', 'Firefox']
       },
       during_watch: {
         browsers: ['PhantomJS']
       },
+    },
+    sshexec: {
+      deploy: {
+        command: ['cd /fluro/apps/teacher-note-builder/', 'git pull'].join(' && '),
+        options: {
+
+          host: '52.62.5.196',
+          username: 'ubuntu',
+          agent: process.env.SSH_AUTH_SOCK,
+          agentForward: true
+
+        }
+      }
+    },
+    gitadd: {
+      task: {
+        options: {
+          all: true
+        }
+      }
+    },
+    gitcommit: {
+      master: {
+        options: {
+          message: grunt.option('m')
+        }
+      }
+    },
+    gitpush: {
+      master: {}
+
     }
   });
 
-  grunt.registerTask('build',['jshint','clean:before','less','dom_munger','ngtemplates','cssmin','concat','ngAnnotate','uglify','copy','htmlmin','clean:after']);
-  grunt.registerTask('serve', ['dom_munger:read','jshint','connect', 'watch']);
-  grunt.registerTask('test',['dom_munger:read','karma:all_tests']);
+  grunt.registerTask('build', ['jshint', 'clean:before', 'less', 'dom_munger:read', 'dom_munger:update', 'ngtemplates', 'cssmin', 'concat', 'ngAnnotate', 'copy', 'htmlmin', 'fix', 'clean:after']);
+  grunt.registerTask('serve', ['dom_munger:read', 'jshint', /*'connect',*/ 'watch']);
+  grunt.registerTask('watch-build', ['dom_munger:read', 'jshint', 'watch:build']);
+  grunt.registerTask('test', ['dom_munger:read', 'karma:all_tests']);
+  grunt.registerTask('deploy', ['build', 'gitadd', 'gitcommit', 'gitpush', 'sshexec:deploy']);
 
-  grunt.event.on('watch', function(action, filepath) {
+  grunt.registerTask('fix', 'html decode index', function () {
+    var Entities = require('html-entities').AllHtmlEntities;
+    var entities = new Entities();
+    var html = grunt.file.read('dist/index.ejs');
+
+    var newhtml = entities.decode(html);
+    grunt.file.write('dist/index.ejs', newhtml);
+
+  });
+  grunt.event.on('watch', function (action, filepath) {
     //https://github.com/gruntjs/grunt-contrib-watch/issues/156
 
     var tasksToRun = [];
@@ -218,7 +264,7 @@ module.exports = function (grunt) {
       //find the appropriate unit test for the changed file
       var spec = filepath;
       if (filepath.lastIndexOf('-spec.js') === -1 || filepath.lastIndexOf('-spec.js') !== filepath.length - 8) {
-        spec = filepath.substring(0,filepath.length - 3) + '-spec.js';
+        spec = filepath.substring(0, filepath.length - 3) + '-spec.js';
       }
 
       //if the spec exists then lets run it
@@ -237,7 +283,7 @@ module.exports = function (grunt) {
       tasksToRun.push('dom_munger:read');
     }
 
-    grunt.config('watch.main.tasks',tasksToRun);
+    grunt.config('watch.main.tasks', tasksToRun);
 
   });
 };

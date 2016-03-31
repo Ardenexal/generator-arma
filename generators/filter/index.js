@@ -24,8 +24,9 @@ module.exports = yeoman.generators.Base.extend({
             appname: this.module.name,
             name: this.name
         };
-        utils.processTemplate('filter.js', this.name + '.js', data, this);
-        utils.processTemplate('filter-spec.js', this.name + '-spec.js', data, this);
+        var toFolder = this.dir + this.name;
+        utils.processTemplate('filter.js',toFolder + '/' +  this.name + '.js', data, this);
+        utils.processTemplate('filter-spec.js',toFolder + '/' +  this.name + '-spec.js', data, this);
 
     }
 });
