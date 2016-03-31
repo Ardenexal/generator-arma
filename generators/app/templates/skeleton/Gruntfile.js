@@ -204,10 +204,10 @@ module.exports = function (grunt) {
     },
     sshexec: {
       deploy: {
-        command: ['cd /fluro/apps/teacher-note-builder/', 'git pull'].join(' && '),
+        command: ['cd *folder to pull*', 'git pull'].join(' && '),
         options: {
 
-          host: '52.62.5.196',
+          host: '',
           username: 'ubuntu',
           agent: process.env.SSH_AUTH_SOCK,
           agentForward: true
